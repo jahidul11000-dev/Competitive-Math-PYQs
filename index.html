@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive PYQ Portal</title>
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+        :root {
+            --text-main: #f8fafc;
+            --text-muted: #cbd5e1;
+            --primary-color: #38bdf8;
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+            --panel-bg: rgba(15, 23, 42, 0.85);
+        }
+
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background-color: #050505; color: var(--text-main);
+            margin: 0; padding: 0; line-height: 1.6;
+            overflow-x: hidden; min-height: 100vh;
+        }
+
+        /* --- Animated Background Blobs --- */
+        .bg-blobs { position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: -1; overflow: hidden; }
+        .blob {
+            position: absolute; filter: blur(100px); opacity: 0.35; border-radius: 50%;
+            animation: float 25s infinite ease-in-out alternate; will-change: transform;
+        }
+        .blob-1 { width: 80vw; height: 80vw; background: #3b82f6; top: -10%; left: -20%; animation-delay: 0s; }
+        .blob-2 { width: 70vw; height: 70vw; background: #8b5cf6; bottom: -10%; right: -20%; animation-delay: -5s; }
+        .blob-3 { width: 75vw; height: 75vw; background: #ec4899; top: 30%; left: 10%; animation-delay: -10s; }
+
+        @keyframes float {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(3%, 3%) scale(1.05); }
+        }
+
+        /* --- Layout & Navbar --- */
+        .navbar {
+            background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border); padding: 16px 20px;
+            position: sticky; top: 0; z-index: 90;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+
+        .navbar-brand { display: flex; align-items: center; gap: 15px; }
+        
+        .hamburger-btn {
+            background: transparent; border: 1px solid var(--glass-border);
+            color: #fff; font-size: 1.5rem; padding: 6px 12px; border-radius: 8px;
+            cursor: pointer; backdrop-filter: blur(5px);
+        }
+
+        .navbar h1 {
+            margin: 0; font-size: 1.3rem; font-weight: 700;
+            background: linear-gradient(to right, #60a5fa, #c084fc);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+
+        .container { max-width: 800px; margin: 30px auto; padding: 0 15px; }
+
+        /* --- Sidebar Navigation (Hamburger Menu) --- */
+        .sidebar {
+            position: fixed; top: 0; left: -300px; width: 280px; height: 100vh;
+            background: var(--panel-bg); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
+            border-right: 1px solid var(--glass-border); z-index: 999; transition: left 0.3s ease;
+            display: flex; flex-direction: column; box-shadow: 10px 0 30px rgba(0,0,0,0.5);
+        }
+        .sidebar.open { left: 0; }
+        .sidebar-header {
+            padding: 20px; border-bottom: 1px solid var(--glass-border);
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .sidebar-header h2 { margin: 0; font-size: 1.2rem; color: #fff; }
+        .close-btn { background: transparent; border: none; color: #ff4b4b; font-size: 1.5rem; cursor: pointer; }
+        
+        .chapter-list { padding: 20px; overflow-y: auto; flex-grow: 1; display: flex; flex-direction: column; gap: 10px; }
+        .chapter-btn {
+            background: rgba(255, 255, 255, 0.05); border: 1px solid var(--glass-border);
+            color: #fff; padding: 15px; border-radius: 10px; text-align: left;
+            font-size: 1rem; font-family: inherit; cursor: pointer; transition: all 0.2s;
+        }
+        .chapter-btn:hover, .chapter-btn.active { background: rgba(56, 189, 248, 0.2); border-color: var(--primary-color); }
+
+        /* --- Glass Cards --- */
+        .loader-message { text-align: center; color: var(--text-muted); font-size: 1.2rem; margin-top: 50px; }
+        
+        .type-header {
+            font-size: 1.5rem; font-weight: 700; color: #fff; text-align: center;
+            margin: 40px 0 20px 0; padding-bottom: 10px;
+            border-bottom: 1px solid var(--glass-border); letter-spacing: 2px;
+        }
+
+        .glass-panel {
+            background: var(--glass-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border); box-shadow: var(--glass-shadow);
+            border-radius: 16px; padding: 20px; margin-bottom: 24px;
+        }
+
+        .question-text { font-size: 1.05rem; margin-bottom: 15px; }
+        .question-image { max-width: 100%; border-radius: 8px; margin-bottom: 15px; border: 1px solid var(--glass-border); background: rgba(0,0,0,0.3); display: block; }
+
+        .options-list { list-style-type: none; padding: 0; margin: 0 0 20px 0; }
+        .options-list li {
+            background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 12px 16px; margin-bottom: 10px; border-radius: 10px; font-size: 1rem;
+        }
+        .options-list li span.opt-label { font-weight: 700; color: var(--primary-color); margin-right: 12px; }
+
+        .exam-tag { text-align: right; font-size: 0.85rem; color: var(--text-muted); font-style: italic; margin-bottom: 20px; }
+
+        /* --- Interactive Reveal --- */
+        .reveal-btn {
+            background: linear-gradient(135deg, rgba(56, 189, 248, 0.15), rgba(139, 92, 246, 0.15));
+            border: 1px solid rgba(139, 92, 246, 0.3); color: #fff;
+            padding: 12px 20px; border-radius: 10px; cursor: pointer;
+            font-weight: 600; width: 100%; transition: all 0.3s ease;
+            font-size: 1rem; text-transform: uppercase; letter-spacing: 1px;
+        }
+        .reveal-btn:hover { background: rgba(139, 92, 246, 0.3); }
+
+        .answer-box {
+            display: none; margin-top: 15px; padding: 16px;
+            background: rgba(16, 185, 129, 0.15); border-left: 4px solid #10b981;
+            border-radius: 6px; font-size: 1.05rem; animation: slideDown 0.3s ease-out;
+        }
+        .answer-box.visible { display: block; }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+<div class="bg-blobs">
+    <div class="blob blob-1"></div><div class="blob blob-2"></div><div class="blob blob-3"></div>
+</div>
+
+<div id="navSidebar" class="sidebar">
+    <div class="sidebar-header">
+        <h2>Chapters</h2>
+        <button class="close-btn" onclick="toggleSidebar()">✕</button>
+    </div>
+    <div class="chapter-list" id="chapter-list">
+        </div>
+</div>
+
+<nav class="navbar">
+    <div class="navbar-brand">
+        <button class="hamburger-btn" onclick="toggleSidebar()">☰</button>
+        <h1 id="chapter-title">Select a Chapter</h1>
+    </div>
+</nav>
+
+<div class="container" id="content-container">
+    <div class="loader-message">Open the menu (☰) to select a chapter.</div>
+</div>
+
+<script>
+    // ==========================================
+    // ⚙️ THE REGISTRY: ADD YOUR JSON FILES HERE
+    // ==========================================
+    const chapterRegistry = [
+        { title: "Number System", filename: "Number_System_PYQ.json" },
+        { title: "Algebra", filename: "Algebra_PYQ.json" },
+        { title: "Geometry", filename: "Geometry_PYQ.json" }
+    ];
+
+    // Initialize Menu
+    document.addEventListener("DOMContentLoaded", () => {
+        const listContainer = document.getElementById('chapter-list');
+        chapterRegistry.forEach(chapter => {
+            const btn = document.createElement('button');
+            btn.className = 'chapter-btn';
+            btn.innerText = chapter.title;
+            btn.onclick = () => loadChapter(chapter, btn);
+            listContainer.appendChild(btn);
+        });
+    });
+
+    function toggleSidebar() {
+        document.getElementById('navSidebar').classList.toggle('open');
+    }
+
+    // Fetch JSON from GitHub/Server
+    async function loadChapter(chapter, btnElement) {
+        // UI Updates
+        toggleSidebar();
+        document.getElementById('chapter-title').innerText = chapter.title;
+        document.getElementById('content-container').innerHTML = '<div class="loader-message">Loading questions...</div>';
+        
+        // Highlight active button
+        document.querySelectorAll('.chapter-btn').forEach(b => b.classList.remove('active'));
+        if(btnElement) btnElement.classList.add('active');
+
+        // Fetch Data
+        try {
+            const response = await fetch(chapter.filename);
+            if (!response.ok) throw new Error('File not found');
+            const data = await response.json();
+            renderContent(data);
+        } catch (error) {
+            document.getElementById('content-container').innerHTML = 
+                `<div class="loader-message" style="color: #ff4b4b;">
+                    Error loading <b>${chapter.filename}</b>.<br>
+                    Make sure the file is uploaded to the same folder as this page.
+                </div>`;
+        }
+    }
+
+    function escapeHTML(str) {
+        if (!str) return '';
+        return str.replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag));
+    }
+
+    function renderContent(data) {
+        const container = document.getElementById('content-container');
+        container.innerHTML = '';
+
+        data.forEach(type => {
+            if (type.questions.length > 0) {
+                const typeHeader = document.createElement('div');
+                typeHeader.className = 'type-header'; typeHeader.innerText = type.name.toUpperCase();
+                container.appendChild(typeHeader);
+
+                type.questions.forEach((q, index) => {
+                    const card = document.createElement('div'); card.className = 'glass-panel';
+
+                    let imgHtml = '';
+                    if (q.imageBase64) imgHtml = `<img src="${q.imageBase64}" class="question-image" alt="Figure" />`;
+
+                    const safeQText = escapeHTML(q.text), safeOptA = escapeHTML(q.opt1), safeOptB = escapeHTML(q.opt2), 
+                          safeOptC = escapeHTML(q.opt3), safeOptD = escapeHTML(q.opt4), safeTag = escapeHTML(q.examTag);
+                    const answerText = q.correctOpt ? `Option ${q.correctOpt}` : 'No answer provided in key.';
+
+                    let html = `
+                        <div class="question-text"><strong>Q${index + 1}.</strong> ${safeQText}</div>
+                        ${imgHtml}
+                        <ul class="options-list">
+                            <li><span class="opt-label">(A)</span> ${safeOptA}</li>
+                            <li><span class="opt-label">(B)</span> ${safeOptB}</li>
+                            <li><span class="opt-label">(C)</span> ${safeOptC}</li>
+                            <li><span class="opt-label">(D)</span> ${safeOptD}</li>
+                        </ul>
+                    `;
+
+                    if (safeTag) html += `<div class="exam-tag">${safeTag}</div>`;
+
+                    html += `
+                        <button class="reveal-btn" onclick="toggleAnswer(this)">Reveal Answer</button>
+                        <div class="answer-box"><strong>Correct Answer:</strong> ${answerText}</div>
+                    `;
+
+                    card.innerHTML = html; container.appendChild(card);
+                });
+            }
+        });
+
+        // Fire KaTeX
+        renderMathInElement(document.body, {
+            delimiters: [{left: "$$", right: "$$", display: true}, {left: "$", right: "$", display: false}],
+            throwOnError: false
+        });
+    }
+
+    function toggleAnswer(btn) {
+        const answerBox = btn.nextElementSibling; answerBox.classList.toggle('visible');
+        btn.innerText = answerBox.classList.contains('visible') ? 'Hide Answer' : 'Reveal Answer';
+    }
+</script>
+
+</body>
+</html>
