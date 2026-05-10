@@ -107,7 +107,16 @@
         }
 
         .question-text { font-size: 1.05rem; margin-bottom: 15px; }
-        .question-image { max-width: 100%; border-radius: 8px; margin-bottom: 15px; border: 1px solid var(--glass-border); background: rgba(0,0,0,0.3); display: block; }
+                .question-image { 
+            max-width: 100%; 
+            min-width: 250px; /* Prevents mobile shrinking */
+            border-radius: 8px; 
+            margin-bottom: 15px; 
+            border: 1px solid var(--glass-border); 
+            background-color: #ffffff; /* Creates the white canvas */
+            padding: 10px; 
+            display: block; 
+        }
 
         .options-list { list-style-type: none; padding: 0; margin: 0 0 20px 0; }
         .options-list li {
@@ -135,6 +144,55 @@
         }
         .answer-box.visible { display: block; }
         @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+                /* Interactive Option Buttons */
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 15px;
+            margin-bottom: 20px;
+        }
+        .option-btn {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--glass-border);
+            padding: 14px 18px;
+            border-radius: 10px;
+            color: var(--text-main);
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: inherit;
+            font-size: 1rem;
+        }
+        .option-btn:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+        
+        /* The Red/Green Overlays */
+        .option-btn.wrong {
+            background: rgba(255, 75, 75, 0.15); 
+            border-color: rgba(255, 75, 75, 0.5);
+        }
+        .option-btn.correct {
+            background: rgba(16, 185, 129, 0.15); 
+            border-color: rgba(16, 185, 129, 0.5);
+            pointer-events: none; /* Stops clicking once they get it right */
+        }
+
+        /* The SVG Icons (Hidden by default) */
+        .status-icon {
+            width: 22px;
+            height: 22px;
+            display: none;
+            flex-shrink: 0;
+            margin-left: 15px;
+        }
+        .option-btn.wrong .icon-cross { display: block; }
+        .option-btn.correct .icon-tick { display: block; }
     </style>
 </head>
 <body>
@@ -244,13 +302,33 @@
                     let html = `
                         <div class="question-text"><strong>Q${index + 1}.</strong> ${safeQText}</div>
                         ${imgHtml}
-                        <ul class="options-list">
-                            <li><span class="opt-label">(A)</span> ${safeOptA}</li>
-                            <li><span class="opt-label">(B)</span> ${safeOptB}</li>
-                            <li><span class="opt-label">(C)</span> ${safeOptC}</li>
-                            <li><span class="opt-label">(D)</span> ${safeOptD}</li>
-                        </ul>
-                    `;
+                        <div class="options-container">`;
+                        
+                    const opts = [
+                        { letter: 'A', text: safeOptA },
+                        { letter: 'B', text: safeOptB },
+                        { letter: 'C', text: safeOptC },
+                        { letter: 'D', text: safeOptD }
+                    ];
+
+                    opts.forEach(opt => {
+                        if(opt.text && opt.text.trim() !== '') { 
+                            html += `
+                            <button class="option-btn" onclick="checkAnswer(this, '${opt.letter}', '${q.correctOpt}')">
+                                <span><strong>${opt.letter}.</strong> ${opt.text}</span>
+                                
+                                <svg class="status-icon icon-tick" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                </svg>
+                                
+                                <svg class="status-icon icon-cross" viewBox="0 0 24 24" fill="none" stroke="#ff4b4b" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                                    <line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line>
+                                </svg>
+                            </button>`;
+                        }
+                    });
+
+                    html += `</div>`;
 
                     if (safeTag) html += `<div class="exam-tag">${safeTag}</div>`;
 
@@ -275,6 +353,21 @@
         const answerBox = btn.nextElementSibling; answerBox.classList.toggle('visible');
         btn.innerText = answerBox.classList.contains('visible') ? 'Hide Answer' : 'Reveal Answer';
     }
+            function checkAnswer(buttonElement, selectedLetter, correctLetter) {
+            // If the user forgot to set an answer in the builder
+            if (!correctLetter || correctLetter === 'undefined' || correctLetter === '') {
+                alert("Teacher hasn't set the correct answer for this question yet!");
+                return;
+            }
+
+            // Check if correct
+            if (selectedLetter === correctLetter) {
+                buttonElement.classList.add('correct');
+                buttonElement.classList.remove('wrong');
+            } else {
+                buttonElement.classList.add('wrong');
+            }
+            }
 </script>
 
 </body>
