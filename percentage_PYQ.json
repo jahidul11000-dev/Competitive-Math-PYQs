@@ -1762,30 +1762,6 @@
         "imageExt": ""
       },
       {
-        "id": "1778247205155",
-        "text": "A family spends $8\\%$ of its monthly income on charity. In a particular month, the family spent $₹1,200$ on charity. What was the income in that month?",
-        "opt1": "$₹15,000$",
-        "opt2": "$₹12,000$",
-        "opt3": "$₹16,000$",
-        "opt4": "$₹18,000$",
-        "examTag": "(SSC CHSL 10+2 Tier-1 (CBE) Exam, 01.06.2022 Shift-II)",
-        "correctOpt": "A",
-        "imageBase64": "",
-        "imageExt": ""
-      },
-      {
-        "id": "1778247205156",
-        "text": "Bhanu spends $20\\%$ of his monthly salary on rent, $10\\%$ on stationery, $14\\%$ on transport, $18\\%$ on electricity, and the balance of $₹1,520$ on remaining items. What is the monthly salary of Bhanu?",
-        "opt1": "$₹10,000$",
-        "opt2": "$₹2,000$",
-        "opt3": "$₹6,000$",
-        "opt4": "$₹4,000$",
-        "examTag": "(SSC CHSL 10+2 Tier-1 (CBE) Exam. 01.06.2022 Shift-1)",
-        "correctOpt": "D",
-        "imageBase64": "",
-        "imageExt": ""
-      },
-      {
         "id": "1778247205157",
         "text": "Madhuri spends $80\\%$ of her salary and Sushma spends $95\\%$ of her salary. But the savings of both are equal. Find the income of Sushma, if the sum of their incomes is $₹10,000$.",
         "opt1": "$₹9,000$",
@@ -1830,18 +1806,6 @@
         "opt4": "$8550$",
         "examTag": "(SSC CHSL 10+2 Tier-1 (CBE) Exam. 08.06.2022 Shift-III)",
         "correctOpt": "A",
-        "imageBase64": "",
-        "imageExt": ""
-      },
-      {
-        "id": "1778247205161",
-        "text": "A man spends $20\\%$ of his monthly salary on food and one-fourth of the remaining salary on charity. If he saves $₹9,600$ per month, which is equal to half of the balance after spending on food and charity, then his monthly salary is:",
-        "opt1": "$₹28,000$",
-        "opt2": "$₹32,000$",
-        "opt3": "$₹26,000$",
-        "opt4": "$₹30,000$",
-        "examTag": "(SSC CHSL 10+2 Tier-1 (CBE) Exam, 10.06.2022 Shift-1)",
-        "correctOpt": "B",
         "imageBase64": "",
         "imageExt": ""
       },
