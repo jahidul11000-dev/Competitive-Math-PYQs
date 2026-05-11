@@ -13,6 +13,8 @@
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
         :root {
+            /* Default Theme Variables (Beautiful Glassmorphism) */
+            --bg-main: #050505;
             --text-main: #f8fafc;
             --text-muted: #cbd5e1;
             --primary-color: #38bdf8;
@@ -20,13 +22,55 @@
             --glass-border: rgba(255, 255, 255, 0.1);
             --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
             --panel-bg: rgba(15, 23, 42, 0.85);
+            --glass-blur: blur(20px);
         }
+
+        /* --- PERFORMANCE THEMES (Flat, Fast, No Blurs) --- */
+        [data-theme="midnight"] {
+            --bg-main: #000000;
+            --text-main: #e2e8f0;
+            --primary-color: #10b981;
+            --glass-bg: #111111;
+            --glass-border: #333333;
+            --glass-shadow: none;
+            --panel-bg: #111111;
+            --glass-blur: none; 
+        }
+        [data-theme="midnight"] .bg-blobs { display: none; }
+
+        [data-theme="vibrant"] {
+            --bg-main: #2e0249;
+            --text-main: #ffffff;
+            --primary-color: #ff007f;
+            --glass-bg: #4a0072;
+            --glass-border: #ff007f;
+            --glass-shadow: none;
+            --panel-bg: #3a005c;
+            --glass-blur: none;
+        }
+        [data-theme="vibrant"] .bg-blobs { display: none; }
+
+        [data-theme="paper"] {
+            --bg-main: #f1f5f9;
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --primary-color: #2563eb;
+            --glass-bg: #ffffff;
+            --glass-border: #cbd5e1;
+            --glass-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            --panel-bg: #ffffff;
+            --glass-blur: none;
+        }
+        [data-theme="paper"] .bg-blobs { display: none; }
+        [data-theme="paper"] .chapter-btn { color: #0f172a; }
 
         body {
             font-family: 'Inter', system-ui, sans-serif;
-            background-color: #050505; color: var(--text-main);
+            background-color: var(--bg-main); 
+            color: var(--text-main);
             margin: 0; padding: 0; line-height: 1.6;
             overflow-x: hidden; min-height: 100vh;
+            transition: background-color 0.3s ease;
         }
 
         /* --- Animated Background Blobs --- */
@@ -46,7 +90,8 @@
 
         /* --- Layout & Navbar --- */
         .navbar {
-            background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            background: var(--panel-bg); 
+            backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
             border-bottom: 1px solid var(--glass-border); padding: 16px 20px;
             position: sticky; top: 0; z-index: 90;
             display: flex; justify-content: space-between; align-items: center;
@@ -54,88 +99,91 @@
 
         .navbar-brand { display: flex; align-items: center; gap: 15px; }
         
-        .hamburger-btn {
+        .icon-btn {
             background: transparent; border: 1px solid var(--glass-border);
-            color: #fff; font-size: 1.5rem; padding: 6px 12px; border-radius: 8px;
-            cursor: pointer; backdrop-filter: blur(5px);
+            color: var(--text-main); font-size: 1.3rem; padding: 6px 12px; border-radius: 8px;
+            cursor: pointer; backdrop-filter: var(--glass-blur); transition: all 0.2s;
         }
 
         .navbar h1 {
             margin: 0; font-size: 1.3rem; font-weight: 700;
-            background: linear-gradient(to right, #60a5fa, #c084fc);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            color: var(--primary-color);
         }
 
         .container { max-width: 800px; margin: 30px auto; padding: 0 15px; }
 
-        /* --- Sidebar Navigation (Hamburger Menu) --- */
+        /* --- Sidebar Navigation --- */
         .sidebar {
             position: fixed; top: 0; left: -300px; width: 280px; height: 100vh;
-            background: var(--panel-bg); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
+            background: var(--panel-bg); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
             border-right: 1px solid var(--glass-border); z-index: 999; transition: left 0.3s ease;
-            display: flex; flex-direction: column; box-shadow: 10px 0 30px rgba(0,0,0,0.5);
+            display: flex; flex-direction: column; box-shadow: var(--glass-shadow);
         }
         .sidebar.open { left: 0; }
         .sidebar-header {
             padding: 20px; border-bottom: 1px solid var(--glass-border);
             display: flex; justify-content: space-between; align-items: center;
         }
-        .sidebar-header h2 { margin: 0; font-size: 1.2rem; color: #fff; }
+        .sidebar-header h2 { margin: 0; font-size: 1.2rem; color: var(--text-main); }
         .close-btn { background: transparent; border: none; color: #ff4b4b; font-size: 1.5rem; cursor: pointer; }
         
         .chapter-list { padding: 20px; overflow-y: auto; flex-grow: 1; display: flex; flex-direction: column; gap: 10px; }
         .chapter-btn {
-            background: rgba(255, 255, 255, 0.05); border: 1px solid var(--glass-border);
-            color: #fff; padding: 15px; border-radius: 10px; text-align: left;
+            background: var(--glass-bg); border: 1px solid var(--glass-border);
+            color: var(--text-main); padding: 15px; border-radius: 10px; text-align: left;
             font-size: 1rem; font-family: inherit; cursor: pointer; transition: all 0.2s;
         }
         .chapter-btn:hover, .chapter-btn.active { background: rgba(56, 189, 248, 0.2); border-color: var(--primary-color); }
 
-        /* --- Glass Cards --- */
+        /* --- Glass Cards & Typography --- */
         .loader-message { text-align: center; color: var(--text-muted); font-size: 1.2rem; margin-top: 50px; }
         
         .type-header {
-            font-size: 1.5rem; font-weight: 700; color: #fff; text-align: center;
-            margin: 40px 0 20px 0; padding-bottom: 10px;
-            border-bottom: 1px solid var(--glass-border); letter-spacing: 2px;
+            font-size: 1.3rem; font-weight: 700; color: var(--text-main); text-align: center;
+            margin: 10px 0 20px 0; padding-bottom: 10px;
+            border-bottom: 1px solid var(--glass-border); letter-spacing: 2px; opacity: 0.8;
         }
 
         .glass-panel {
-            background: var(--glass-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            background: var(--glass-bg); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
             border: 1px solid var(--glass-border); box-shadow: var(--glass-shadow);
             border-radius: 16px; padding: 20px; margin-bottom: 24px;
         }
 
         .question-text { font-size: 1.05rem; margin-bottom: 15px; }
-                .question-image { 
-            max-width: 100%; 
-            min-width: 250px; /* Prevents mobile shrinking */
-            border-radius: 8px; 
-            margin-bottom: 15px; 
-            border: 1px solid var(--glass-border); 
-            background-color: #ffffff; /* Creates the white canvas */
-            padding: 10px; 
-            display: block; 
+        .question-image { 
+            max-width: 100%; min-width: 250px; border-radius: 8px; 
+            margin-bottom: 15px; border: 1px solid var(--glass-border); 
+            background-color: #ffffff; padding: 10px; display: block; 
         }
-
-        .options-list { list-style-type: none; padding: 0; margin: 0 0 20px 0; }
-        .options-list li {
-            background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.08);
-            padding: 12px 16px; margin-bottom: 10px; border-radius: 10px; font-size: 1rem;
-        }
-        .options-list li span.opt-label { font-weight: 700; color: var(--primary-color); margin-right: 12px; }
 
         .exam-tag { text-align: right; font-size: 0.85rem; color: var(--text-muted); font-style: italic; margin-bottom: 20px; }
 
-        /* --- Interactive Reveal --- */
-        .reveal-btn {
+        /* --- Question Palette Grid --- */
+        #gridContainer { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+        .grid-btn {
+            width: 40px; height: 40px; border-radius: 8px; border: 1px solid var(--glass-border);
+            background: var(--glass-bg); color: var(--text-main); font-weight: bold; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; font-size: 1rem; transition: all 0.2s;
+        }
+        .grid-btn:hover { border-color: var(--primary-color); }
+        .grid-btn.active-question { border: 2px solid var(--primary-color); transform: scale(1.1); box-shadow: 0 0 10px var(--primary-color); }
+        .grid-btn.palette-correct { background: rgba(16, 185, 129, 0.4); border-color: #10b981; }
+        .grid-btn.palette-wrong { background: rgba(255, 75, 75, 0.4); border-color: #ff4b4b; }
+
+        /* --- Interactive Reveal & Navigation Buttons --- */
+        .action-row { display: flex; justify-content: space-between; gap: 10px; margin-top: 15px; }
+        .nav-btn { flex: 1; }
+
+        .btn-primary {
             background: linear-gradient(135deg, rgba(56, 189, 248, 0.15), rgba(139, 92, 246, 0.15));
-            border: 1px solid rgba(139, 92, 246, 0.3); color: #fff;
+            border: 1px solid rgba(139, 92, 246, 0.3); color: var(--text-main);
             padding: 12px 20px; border-radius: 10px; cursor: pointer;
             font-weight: 600; width: 100%; transition: all 0.3s ease;
             font-size: 1rem; text-transform: uppercase; letter-spacing: 1px;
         }
-        .reveal-btn:hover { background: rgba(139, 92, 246, 0.3); }
+        .btn-primary:hover:not(:disabled) { background: rgba(139, 92, 246, 0.3); }
+        .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
 
         .answer-box {
             display: none; margin-top: 15px; padding: 16px;
@@ -144,53 +192,21 @@
         }
         .answer-box.visible { display: block; }
         @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
-                /* Interactive Option Buttons */
-        .options-container {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin-top: 15px;
-            margin-bottom: 20px;
-        }
-        .option-btn {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid var(--glass-border);
-            padding: 14px 18px;
-            border-radius: 10px;
-            color: var(--text-main);
-            text-align: left;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-family: inherit;
-            font-size: 1rem;
-        }
-        .option-btn:hover {
-            background: rgba(255, 255, 255, 0.08);
-            border-color: rgba(255, 255, 255, 0.2);
-        }
         
-        /* The Red/Green Overlays */
-        .option-btn.wrong {
-            background: rgba(255, 75, 75, 0.15); 
-            border-color: rgba(255, 75, 75, 0.5);
+        /* --- Options --- */
+        .options-container { display: flex; flex-direction: column; gap: 10px; margin-top: 15px; margin-bottom: 20px; }
+        .option-btn {
+            background: rgba(255, 255, 255, 0.03); border: 1px solid var(--glass-border);
+            padding: 14px 18px; border-radius: 10px; color: var(--text-main); text-align: left;
+            cursor: pointer; transition: all 0.2s ease; display: flex; justify-content: space-between;
+            align-items: center; font-family: inherit; font-size: 1rem;
         }
-        .option-btn.correct {
-            background: rgba(16, 185, 129, 0.15); 
-            border-color: rgba(16, 185, 129, 0.5);
-            pointer-events: none; /* Stops clicking once they get it right */
-        }
+        .option-btn:hover { background: rgba(255, 255, 255, 0.08); border-color: rgba(255, 255, 255, 0.2); }
+        
+        .option-btn.wrong { background: rgba(255, 75, 75, 0.15); border-color: rgba(255, 75, 75, 0.5); }
+        .option-btn.correct { background: rgba(16, 185, 129, 0.15); border-color: rgba(16, 185, 129, 0.5); }
 
-        /* The SVG Icons (Hidden by default) */
-        .status-icon {
-            width: 22px;
-            height: 22px;
-            display: none;
-            flex-shrink: 0;
-            margin-left: 15px;
-        }
+        .status-icon { width: 22px; height: 22px; display: none; flex-shrink: 0; margin-left: 15px; }
         .option-btn.wrong .icon-cross { display: block; }
         .option-btn.correct .icon-tick { display: block; }
     </style>
@@ -206,19 +222,34 @@
         <h2>Chapters</h2>
         <button class="close-btn" onclick="toggleSidebar()">✕</button>
     </div>
-    <div class="chapter-list" id="chapter-list">
-        </div>
+    <div class="chapter-list" id="chapter-list"></div>
 </div>
 
 <nav class="navbar">
     <div class="navbar-brand">
-        <button class="hamburger-btn" onclick="toggleSidebar()">☰</button>
+        <button class="icon-btn" onclick="toggleSidebar()">☰</button>
         <h1 id="chapter-title">Select a Chapter</h1>
     </div>
+    <button class="icon-btn" onclick="randomizeTheme()" title="Switch Theme">🎨</button>
 </nav>
 
-<div class="container" id="content-container">
+<div class="container" id="loader-container">
     <div class="loader-message">Open the menu (☰) to select a chapter.</div>
+</div>
+
+<div class="container" id="main-interface" style="display:none;">
+    
+    <div class="glass-panel" style="padding: 15px; margin-bottom: 20px;">
+        <h4 style="margin: 0; color: var(--text-main); font-size: 1.1rem;">Question Palette</h4>
+        <div id="gridContainer"></div>
+    </div>
+    
+    <div id="question-viewer"></div>
+    
+    <div class="action-row" style="margin-bottom: 40px;">
+        <button id="prevBtn" class="btn-primary nav-btn" onclick="navigateQuestion(-1)">⬅ Previous</button>
+        <button id="nextBtn" class="btn-primary nav-btn" onclick="navigateQuestion(1)">Next ➡</button>
+    </div>
 </div>
 
 <script>
@@ -233,7 +264,29 @@
         { title: "Geometry", filename: "Geometry_PYQ.json" }
     ];
 
-    // Initialize Menu
+    // Global State
+    let flatQuestions = [];
+    let currentQuestionIndex = 0;
+
+    // --- THEME ENGINE ---
+    const themes = ['default', 'midnight', 'vibrant', 'paper'];
+    function randomizeTheme() {
+        const currentTheme = document.documentElement.getAttribute('data-theme') || 'default';
+        let nextTheme = currentTheme;
+        
+        // Loop until we get a DIFFERENT theme
+        while(nextTheme === currentTheme) {
+            nextTheme = themes[Math.floor(Math.random() * themes.length)];
+        }
+        
+        if(nextTheme === 'default') {
+            document.documentElement.removeAttribute('data-theme');
+        } else {
+            document.documentElement.setAttribute('data-theme', nextTheme);
+        }
+    }
+
+    // --- INITIALIZATION ---
     document.addEventListener("DOMContentLoaded", () => {
         const listContainer = document.getElementById('chapter-list');
         chapterRegistry.forEach(chapter => {
@@ -249,25 +302,48 @@
         document.getElementById('navSidebar').classList.toggle('open');
     }
 
-    // Fetch JSON from GitHub/Server
+    // --- LOAD DATA & FLATTEN ---
     async function loadChapter(chapter, btnElement) {
-        // UI Updates
         toggleSidebar();
         document.getElementById('chapter-title').innerText = chapter.title;
-        document.getElementById('content-container').innerHTML = '<div class="loader-message">Loading questions...</div>';
+        document.getElementById('loader-container').style.display = 'block';
+        document.getElementById('main-interface').style.display = 'none';
         
-        // Highlight active button
         document.querySelectorAll('.chapter-btn').forEach(b => b.classList.remove('active'));
         if(btnElement) btnElement.classList.add('active');
 
-        // Fetch Data
         try {
             const response = await fetch(chapter.filename);
             if (!response.ok) throw new Error('File not found');
             const data = await response.json();
-            renderContent(data);
+            
+            // Flatten the questions array for the Single Page Viewer
+            flatQuestions = [];
+            let globalIndex = 0;
+            data.forEach(type => {
+                if (type.questions && type.questions.length > 0) {
+                    type.questions.forEach(q => {
+                        flatQuestions.push({
+                            typeName: type.name,
+                            questionData: q,
+                            index: globalIndex++,
+                            // State tracking so progress isn't lost
+                            userSelected: null,
+                            isCorrect: null,
+                            revealed: false 
+                        });
+                    });
+                }
+            });
+
+            document.getElementById('loader-container').style.display = 'none';
+            document.getElementById('main-interface').style.display = 'block';
+
+            currentQuestionIndex = 0;
+            jumpToQuestion(0);
+
         } catch (error) {
-            document.getElementById('content-container').innerHTML = 
+            document.getElementById('loader-container').innerHTML = 
                 `<div class="loader-message" style="color: #ff4b4b;">
                     Error loading <b>${chapter.filename}</b>.<br>
                     Make sure the file is uploaded to the same folder as this page.
@@ -280,96 +356,155 @@
         return str.replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag));
     }
 
-    function renderContent(data) {
-        const container = document.getElementById('content-container');
-        container.innerHTML = '';
+    // --- PALETTE RENDERING ---
+    function renderQuestionPalette() {
+        const gridContainer = document.getElementById('gridContainer');
+        gridContainer.innerHTML = '';
+        
+        flatQuestions.forEach(fq => {
+            const btn = document.createElement('button');
+            btn.className = 'grid-btn';
+            btn.innerText = fq.index + 1;
+            
+            // Active Highlight
+            if (fq.index === currentQuestionIndex) btn.classList.add('active-question');
+            
+            // Color code based on user's saved progress
+            if (fq.isCorrect === true) btn.classList.add('palette-correct');
+            if (fq.isCorrect === false) btn.classList.add('palette-wrong');
 
-        data.forEach(type => {
-            if (type.questions.length > 0) {
-                const typeHeader = document.createElement('div');
-                typeHeader.className = 'type-header'; typeHeader.innerText = type.name.toUpperCase();
-                container.appendChild(typeHeader);
+            btn.onclick = () => jumpToQuestion(fq.index);
+            gridContainer.appendChild(btn);
+        });
+    }
 
-                type.questions.forEach((q, index) => {
-                    const card = document.createElement('div'); card.className = 'glass-panel';
+    // --- RENDER SINGLE QUESTION ---
+    function jumpToQuestion(index) {
+        if(index < 0 || index >= flatQuestions.length) return;
+        currentQuestionIndex = index;
+        
+        renderQuestionPalette(); // Update grid highlights
 
-                    let imgHtml = '';
-                    if (q.imageBase64) imgHtml = `<img src="${q.imageBase64}" class="question-image" alt="Figure" />`;
+        const fq = flatQuestions[index];
+        const q = fq.questionData;
+        const viewer = document.getElementById('question-viewer');
+        
+        let imgHtml = '';
+        if (q.imageBase64) imgHtml = `<img src="${q.imageBase64}" class="question-image" alt="Figure" />`;
 
-                    const safeQText = escapeHTML(q.text), safeOptA = escapeHTML(q.opt1), safeOptB = escapeHTML(q.opt2), 
-                          safeOptC = escapeHTML(q.opt3), safeOptD = escapeHTML(q.opt4), safeTag = escapeHTML(q.examTag);
-                    const answerText = q.correctOpt ? `Option ${q.correctOpt}` : 'No answer provided in key.';
+        const safeQText = escapeHTML(q.text), safeTag = escapeHTML(q.examTag);
+        const answerText = q.correctOpt ? `Option ${q.correctOpt}` : 'No answer provided in key.';
 
-                    let html = `
-                        <div class="question-text"><strong>Q${index + 1}.</strong> ${safeQText}</div>
-                        ${imgHtml}
-                        <div class="options-container">`;
-                        
-                    const opts = [
-                        { letter: 'A', text: safeOptA },
-                        { letter: 'B', text: safeOptB },
-                        { letter: 'C', text: safeOptC },
-                        { letter: 'D', text: safeOptD }
-                    ];
+        // Build Options HTML
+        let optsHtml = '';
+        const opts = [
+            { letter: 'A', text: escapeHTML(q.opt1) },
+            { letter: 'B', text: escapeHTML(q.opt2) },
+            { letter: 'C', text: escapeHTML(q.opt3) },
+            { letter: 'D', text: escapeHTML(q.opt4) }
+        ];
 
-                    opts.forEach(opt => {
-                        if(opt.text && opt.text.trim() !== '') { 
-                            html += `
-                            <button class="option-btn" onclick="checkAnswer(this, '${opt.letter}', '${q.correctOpt}')">
-                                <span><strong>${opt.letter}.</strong> ${opt.text}</span>
-                                
-                                <svg class="status-icon icon-tick" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                                    <polyline points="20 6 9 17 4 12"></polyline>
-                                </svg>
-                                
-                                <svg class="status-icon icon-cross" viewBox="0 0 24 24" fill="none" stroke="#ff4b4b" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                                    <line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line>
-                                </svg>
-                            </button>`;
-                        }
-                    });
+        opts.forEach(opt => {
+            if(opt.text && opt.text.trim() !== '') { 
+                // Restore classes if user previously answered it
+                let btnClass = 'option-btn';
+                if (fq.userSelected === opt.letter) {
+                    btnClass += (fq.userSelected === q.correctOpt) ? ' correct' : ' wrong';
+                }
 
-                    html += `</div>`;
-
-                    if (safeTag) html += `<div class="exam-tag">${safeTag}</div>`;
-
-                    html += `
-                        <button class="reveal-btn" onclick="toggleAnswer(this)">Reveal Answer</button>
-                        <div class="answer-box"><strong>Correct Answer:</strong> ${answerText}</div>
-                    `;
-
-                    card.innerHTML = html; container.appendChild(card);
-                });
+                optsHtml += `
+                <button class="${btnClass}" onclick="checkAnswer(this, '${opt.letter}', '${q.correctOpt}')">
+                    <span><strong>${opt.letter}.</strong> ${opt.text}</span>
+                    <svg class="status-icon icon-tick" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                    <svg class="status-icon icon-cross" viewBox="0 0 24 24" fill="none" stroke="#ff4b4b" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>`;
             }
         });
 
-        // Fire KaTeX
-        renderMathInElement(document.body, {
+        // Construct Final HTML
+        viewer.innerHTML = `
+            <div class="type-header">${escapeHTML(fq.typeName).toUpperCase()}</div>
+            <div class="glass-panel">
+                <div class="question-text"><strong>Q${index + 1}.</strong> ${safeQText}</div>
+                ${imgHtml}
+                <div class="options-container" id="options-box">
+                    ${optsHtml}
+                </div>
+                ${safeTag ? `<div class="exam-tag">${safeTag}</div>` : ''}
+                
+                <button id="reveal-btn" class="btn-primary" onclick="toggleAnswer()">
+                    ${fq.revealed ? 'Hide Answer' : 'Reveal Answer'}
+                </button>
+                <div id="answer-box" class="answer-box ${fq.revealed ? 'visible' : ''}">
+                    <strong>Correct Answer:</strong> ${answerText}
+                </div>
+            </div>
+        `;
+
+        // Re-fire KaTeX
+        renderMathInElement(viewer, {
             delimiters: [{left: "$$", right: "$$", display: true}, {left: "$", right: "$", display: false}],
             throwOnError: false
         });
+        
+        // Update Bottom Navigation Buttons
+        document.getElementById('prevBtn').disabled = (index === 0);
+        document.getElementById('nextBtn').disabled = (index === flatQuestions.length - 1);
     }
 
-    function toggleAnswer(btn) {
-        const answerBox = btn.nextElementSibling; answerBox.classList.toggle('visible');
-        btn.innerText = answerBox.classList.contains('visible') ? 'Hide Answer' : 'Reveal Answer';
+    function navigateQuestion(step) {
+        jumpToQuestion(currentQuestionIndex + step);
     }
-            function checkAnswer(buttonElement, selectedLetter, correctLetter) {
-            // If the user forgot to set an answer in the builder
-            if (!correctLetter || correctLetter === 'undefined' || correctLetter === '') {
-                alert("Teacher hasn't set the correct answer for this question yet!");
-                return;
-            }
 
-            // Check if correct
-            if (selectedLetter === correctLetter) {
-                buttonElement.classList.add('correct');
-                buttonElement.classList.remove('wrong');
-            } else {
-                buttonElement.classList.add('wrong');
-            }
-            }
+    // --- INTERACTIVITY (With State Saving) ---
+    function checkAnswer(buttonElement, selectedLetter, correctLetter) {
+        if (!correctLetter || correctLetter === 'undefined' || correctLetter === '') {
+            alert("Teacher hasn't set the correct answer for this question yet!");
+            return;
+        }
+
+        const currentQ = flatQuestions[currentQuestionIndex];
+        currentQ.userSelected = selectedLetter;
+
+        // Reset visual state of all buttons in this question
+        const optionsBox = document.getElementById('options-box');
+        for(let btn of optionsBox.children) {
+            btn.classList.remove('correct', 'wrong');
+        }
+
+        // Apply new visual state and save to memory
+        if (selectedLetter === correctLetter) {
+            buttonElement.classList.add('correct');
+            currentQ.isCorrect = true;
+        } else {
+            buttonElement.classList.add('wrong');
+            currentQ.isCorrect = false;
+        }
+        
+        renderQuestionPalette(); // Update grid colors instantly
+    }
+
+    function toggleAnswer() {
+        const currentQ = flatQuestions[currentQuestionIndex];
+        currentQ.revealed = !currentQ.revealed; // Save state
+        
+        const answerBox = document.getElementById('answer-box');
+        const revealBtn = document.getElementById('reveal-btn');
+        
+        if(currentQ.revealed) {
+            answerBox.classList.add('visible');
+            revealBtn.innerText = 'Hide Answer';
+        } else {
+            answerBox.classList.remove('visible');
+            revealBtn.innerText = 'Reveal Answer';
+        }
+    }
 </script>
 
 </body>
 </html>
+       
