@@ -112,14 +112,22 @@
 
         .container { max-width: 800px; margin: 30px auto; padding: 0 15px; }
 
-        /* --- Sidebar Navigation --- */
+        /* --- Sidebars (Left for Chapters, Right for Palette) --- */
         .sidebar {
-            position: fixed; top: 0; left: -300px; width: 280px; height: 100vh;
+            position: fixed; top: 0; height: 100vh;
             background: var(--panel-bg); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
-            border-right: 1px solid var(--glass-border); z-index: 999; transition: left 0.3s ease;
+            z-index: 999; transition: all 0.3s ease;
             display: flex; flex-direction: column; box-shadow: var(--glass-shadow);
         }
-        .sidebar.open { left: 0; }
+        
+        /* Left Sidebar (Chapters) */
+        .left-sidebar { left: -300px; width: 280px; border-right: 1px solid var(--glass-border); }
+        .left-sidebar.open { left: 0; }
+        
+        /* Right Sidebar (Question Palette) */
+        .right-sidebar { right: -350px; width: 320px; border-left: 1px solid var(--glass-border); }
+        .right-sidebar.open { right: 0; }
+
         .sidebar-header {
             padding: 20px; border-bottom: 1px solid var(--glass-border);
             display: flex; justify-content: space-between; align-items: center;
@@ -127,7 +135,8 @@
         .sidebar-header h2 { margin: 0; font-size: 1.2rem; color: var(--text-main); }
         .close-btn { background: transparent; border: none; color: #ff4b4b; font-size: 1.5rem; cursor: pointer; }
         
-        .chapter-list { padding: 20px; overflow-y: auto; flex-grow: 1; display: flex; flex-direction: column; gap: 10px; }
+        .sidebar-content { padding: 20px; overflow-y: auto; flex-grow: 1; display: flex; flex-direction: column; gap: 10px; }
+        
         .chapter-btn {
             background: var(--glass-bg); border: 1px solid var(--glass-border);
             color: var(--text-main); padding: 15px; border-radius: 10px; text-align: left;
@@ -135,19 +144,38 @@
         }
         .chapter-btn:hover, .chapter-btn.active { background: rgba(56, 189, 248, 0.2); border-color: var(--primary-color); }
 
+        /* --- Question Palette Grid Styles --- */
+        .palette-type-title {
+            font-size: 0.9rem; font-weight: bold; color: var(--primary-color);
+            margin: 15px 0 10px 0; border-bottom: 1px solid var(--glass-border); padding-bottom: 5px;
+        }
+        .palette-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+        
+        .grid-btn {
+            width: 38px; height: 38px; border-radius: 8px; border: 1px solid var(--glass-border);
+            background: var(--glass-bg); color: var(--text-main); font-weight: bold; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; font-size: 0.95rem; transition: all 0.2s;
+        }
+        .grid-btn:hover { border-color: var(--primary-color); }
+        
+        /* Colored states for the palette */
+        .grid-btn.palette-correct { background: rgba(16, 185, 129, 0.4); border-color: #10b981; color: #fff; }
+        .grid-btn.palette-wrong { background: rgba(255, 75, 75, 0.4); border-color: #ff4b4b; color: #fff; }
+
         /* --- Glass Cards & Typography --- */
         .loader-message { text-align: center; color: var(--text-muted); font-size: 1.2rem; margin-top: 50px; }
         
         .type-header {
-            font-size: 1.3rem; font-weight: 700; color: var(--text-main); text-align: center;
-            margin: 10px 0 20px 0; padding-bottom: 10px;
-            border-bottom: 1px solid var(--glass-border); letter-spacing: 2px; opacity: 0.8;
+            font-size: 1.5rem; font-weight: 700; color: var(--text-main); text-align: center;
+            margin: 40px 0 20px 0; padding-bottom: 10px;
+            border-bottom: 1px solid var(--glass-border); letter-spacing: 2px; opacity: 0.9;
         }
 
         .glass-panel {
             background: var(--glass-bg); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
             border: 1px solid var(--glass-border); box-shadow: var(--glass-shadow);
             border-radius: 16px; padding: 20px; margin-bottom: 24px;
+            scroll-margin-top: 90px; /* Prevents sticky navbar from covering the question when scrolling! */
         }
 
         .question-text { font-size: 1.05rem; margin-bottom: 15px; }
@@ -159,22 +187,7 @@
 
         .exam-tag { text-align: right; font-size: 0.85rem; color: var(--text-muted); font-style: italic; margin-bottom: 20px; }
 
-        /* --- Question Palette Grid --- */
-        #gridContainer { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
-        .grid-btn {
-            width: 40px; height: 40px; border-radius: 8px; border: 1px solid var(--glass-border);
-            background: var(--glass-bg); color: var(--text-main); font-weight: bold; cursor: pointer;
-            display: flex; align-items: center; justify-content: center; font-size: 1rem; transition: all 0.2s;
-        }
-        .grid-btn:hover { border-color: var(--primary-color); }
-        .grid-btn.active-question { border: 2px solid var(--primary-color); transform: scale(1.1); box-shadow: 0 0 10px var(--primary-color); }
-        .grid-btn.palette-correct { background: rgba(16, 185, 129, 0.4); border-color: #10b981; }
-        .grid-btn.palette-wrong { background: rgba(255, 75, 75, 0.4); border-color: #ff4b4b; }
-
         /* --- Interactive Reveal & Navigation Buttons --- */
-        .action-row { display: flex; justify-content: space-between; gap: 10px; margin-top: 15px; }
-        .nav-btn { flex: 1; }
-
         .btn-primary {
             background: linear-gradient(135deg, rgba(56, 189, 248, 0.15), rgba(139, 92, 246, 0.15));
             border: 1px solid rgba(139, 92, 246, 0.3); color: var(--text-main);
@@ -182,8 +195,7 @@
             font-weight: 600; width: 100%; transition: all 0.3s ease;
             font-size: 1rem; text-transform: uppercase; letter-spacing: 1px;
         }
-        .btn-primary:hover:not(:disabled) { background: rgba(139, 92, 246, 0.3); }
-        .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+        .btn-primary:hover { background: rgba(139, 92, 246, 0.3); }
 
         .answer-box {
             display: none; margin-top: 15px; padding: 16px;
@@ -204,7 +216,7 @@
         .option-btn:hover { background: rgba(255, 255, 255, 0.08); border-color: rgba(255, 255, 255, 0.2); }
         
         .option-btn.wrong { background: rgba(255, 75, 75, 0.15); border-color: rgba(255, 75, 75, 0.5); }
-        .option-btn.correct { background: rgba(16, 185, 129, 0.15); border-color: rgba(16, 185, 129, 0.5); }
+        .option-btn.correct { background: rgba(16, 185, 129, 0.15); border-color: rgba(16, 185, 129, 0.5); pointer-events: none;}
 
         .status-icon { width: 22px; height: 22px; display: none; flex-shrink: 0; margin-left: 15px; }
         .option-btn.wrong .icon-cross { display: block; }
@@ -217,39 +229,36 @@
     <div class="blob blob-1"></div><div class="blob blob-2"></div><div class="blob blob-3"></div>
 </div>
 
-<div id="navSidebar" class="sidebar">
+<div id="navSidebar" class="sidebar left-sidebar">
     <div class="sidebar-header">
         <h2>Chapters</h2>
         <button class="close-btn" onclick="toggleSidebar()">✕</button>
     </div>
-    <div class="chapter-list" id="chapter-list"></div>
+    <div class="sidebar-content" id="chapter-list"></div>
+</div>
+
+<div id="paletteSidebar" class="sidebar right-sidebar">
+    <div class="sidebar-header">
+        <h2>Question Palette</h2>
+        <button class="close-btn" onclick="togglePalette()">✕</button>
+    </div>
+    <div class="sidebar-content" id="palette-content">
+        </div>
 </div>
 
 <nav class="navbar">
     <div class="navbar-brand">
-        <button class="icon-btn" onclick="toggleSidebar()">☰</button>
+        <button class="icon-btn" onclick="toggleSidebar()" title="Chapters Menu">☰</button>
         <h1 id="chapter-title">Select a Chapter</h1>
     </div>
-    <button class="icon-btn" onclick="randomizeTheme()" title="Switch Theme">🎨</button>
+    <div>
+        <button class="icon-btn" onclick="togglePalette()" title="Question Palette" style="margin-right: 5px;">🔢</button>
+        <button class="icon-btn" onclick="randomizeTheme()" title="Switch Theme">🎨</button>
+    </div>
 </nav>
 
-<div class="container" id="loader-container">
+<div class="container" id="content-container">
     <div class="loader-message">Open the menu (☰) to select a chapter.</div>
-</div>
-
-<div class="container" id="main-interface" style="display:none;">
-    
-    <div class="glass-panel" style="padding: 15px; margin-bottom: 20px;">
-        <h4 style="margin: 0; color: var(--text-main); font-size: 1.1rem;">Question Palette</h4>
-        <div id="gridContainer"></div>
-    </div>
-    
-    <div id="question-viewer"></div>
-    
-    <div class="action-row" style="margin-bottom: 40px;">
-        <button id="prevBtn" class="btn-primary nav-btn" onclick="navigateQuestion(-1)">⬅ Previous</button>
-        <button id="nextBtn" class="btn-primary nav-btn" onclick="navigateQuestion(1)">Next ➡</button>
-    </div>
 </div>
 
 <script>
@@ -264,17 +273,12 @@
         { title: "Geometry", filename: "Geometry_PYQ.json" }
     ];
 
-    // Global State
-    let flatQuestions = [];
-    let currentQuestionIndex = 0;
-
     // --- THEME ENGINE ---
     const themes = ['default', 'midnight', 'vibrant', 'paper'];
     function randomizeTheme() {
         const currentTheme = document.documentElement.getAttribute('data-theme') || 'default';
         let nextTheme = currentTheme;
         
-        // Loop until we get a DIFFERENT theme
         while(nextTheme === currentTheme) {
             nextTheme = themes[Math.floor(Math.random() * themes.length)];
         }
@@ -286,7 +290,7 @@
         }
     }
 
-    // --- INITIALIZATION ---
+    // --- UI CONTROLS ---
     document.addEventListener("DOMContentLoaded", () => {
         const listContainer = document.getElementById('chapter-list');
         chapterRegistry.forEach(chapter => {
@@ -300,14 +304,32 @@
 
     function toggleSidebar() {
         document.getElementById('navSidebar').classList.toggle('open');
+        // Close palette if open to prevent overlap
+        document.getElementById('paletteSidebar').classList.remove('open'); 
     }
 
-    // --- LOAD DATA & FLATTEN ---
+    function togglePalette() {
+        document.getElementById('paletteSidebar').classList.toggle('open');
+        // Close sidebar if open
+        document.getElementById('navSidebar').classList.remove('open');
+    }
+
+    function scrollToQuestion(qId) {
+        // Close the palette on mobile so they can see the question
+        document.getElementById('paletteSidebar').classList.remove('open');
+        
+        // Scroll smoothly to the specific question
+        const element = document.getElementById(qId);
+        if(element) {
+            element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    }
+
+    // --- DATA LOADING & RENDERING ---
     async function loadChapter(chapter, btnElement) {
         toggleSidebar();
         document.getElementById('chapter-title').innerText = chapter.title;
-        document.getElementById('loader-container').style.display = 'block';
-        document.getElementById('main-interface').style.display = 'none';
+        document.getElementById('content-container').innerHTML = '<div class="loader-message">Loading questions...</div>';
         
         document.querySelectorAll('.chapter-btn').forEach(b => b.classList.remove('active'));
         if(btnElement) btnElement.classList.add('active');
@@ -316,34 +338,9 @@
             const response = await fetch(chapter.filename);
             if (!response.ok) throw new Error('File not found');
             const data = await response.json();
-            
-            // Flatten the questions array for the Single Page Viewer
-            flatQuestions = [];
-            let globalIndex = 0;
-            data.forEach(type => {
-                if (type.questions && type.questions.length > 0) {
-                    type.questions.forEach(q => {
-                        flatQuestions.push({
-                            typeName: type.name,
-                            questionData: q,
-                            index: globalIndex++,
-                            // State tracking so progress isn't lost
-                            userSelected: null,
-                            isCorrect: null,
-                            revealed: false 
-                        });
-                    });
-                }
-            });
-
-            document.getElementById('loader-container').style.display = 'none';
-            document.getElementById('main-interface').style.display = 'block';
-
-            currentQuestionIndex = 0;
-            jumpToQuestion(0);
-
+            renderContent(data);
         } catch (error) {
-            document.getElementById('loader-container').innerHTML = 
+            document.getElementById('content-container').innerHTML = 
                 `<div class="loader-message" style="color: #ff4b4b;">
                     Error loading <b>${chapter.filename}</b>.<br>
                     Make sure the file is uploaded to the same folder as this page.
@@ -356,155 +353,138 @@
         return str.replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag));
     }
 
-    // --- PALETTE RENDERING ---
-    function renderQuestionPalette() {
-        const gridContainer = document.getElementById('gridContainer');
-        gridContainer.innerHTML = '';
+    function renderContent(data) {
+        const container = document.getElementById('content-container');
+        const paletteContent = document.getElementById('palette-content');
         
-        flatQuestions.forEach(fq => {
-            const btn = document.createElement('button');
-            btn.className = 'grid-btn';
-            btn.innerText = fq.index + 1;
-            
-            // Active Highlight
-            if (fq.index === currentQuestionIndex) btn.classList.add('active-question');
-            
-            // Color code based on user's saved progress
-            if (fq.isCorrect === true) btn.classList.add('palette-correct');
-            if (fq.isCorrect === false) btn.classList.add('palette-wrong');
+        container.innerHTML = '';
+        paletteContent.innerHTML = ''; // Clear old palette
 
-            btn.onclick = () => jumpToQuestion(fq.index);
-            gridContainer.appendChild(btn);
-        });
-    }
+        data.forEach((type, typeIndex) => {
+            if (type.questions && type.questions.length > 0) {
+                // 1. Render Type Header on Main Page
+                const typeHeader = document.createElement('div');
+                typeHeader.className = 'type-header'; 
+                typeHeader.innerText = type.name.toUpperCase();
+                container.appendChild(typeHeader);
 
-    // --- RENDER SINGLE QUESTION ---
-    function jumpToQuestion(index) {
-        if(index < 0 || index >= flatQuestions.length) return;
-        currentQuestionIndex = index;
-        
-        renderQuestionPalette(); // Update grid highlights
+                // 2. Render Type Header in the Palette
+                const palHeader = document.createElement('div');
+                palHeader.className = 'palette-type-title';
+                palHeader.innerText = type.name.toUpperCase();
+                paletteContent.appendChild(palHeader);
 
-        const fq = flatQuestions[index];
-        const q = fq.questionData;
-        const viewer = document.getElementById('question-viewer');
-        
-        let imgHtml = '';
-        if (q.imageBase64) imgHtml = `<img src="${q.imageBase64}" class="question-image" alt="Figure" />`;
+                // 3. Create Grid Container for this Type in the Palette
+                const palGrid = document.createElement('div');
+                palGrid.className = 'palette-grid';
+                paletteContent.appendChild(palGrid);
 
-        const safeQText = escapeHTML(q.text), safeTag = escapeHTML(q.examTag);
-        const answerText = q.correctOpt ? `Option ${q.correctOpt}` : 'No answer provided in key.';
+                // 4. Render Questions
+                type.questions.forEach((q, qIndex) => {
+                    // Create a unique ID for scrolling linking
+                    const uniqueQId = `q-${typeIndex}-${qIndex}`;
+                    const paletteBtnId = `pal-btn-${typeIndex}-${qIndex}`;
 
-        // Build Options HTML
-        let optsHtml = '';
-        const opts = [
-            { letter: 'A', text: escapeHTML(q.opt1) },
-            { letter: 'B', text: escapeHTML(q.opt2) },
-            { letter: 'C', text: escapeHTML(q.opt3) },
-            { letter: 'D', text: escapeHTML(q.opt4) }
-        ];
+                    // --- Add Button to Palette Grid ---
+                    const palBtn = document.createElement('button');
+                    palBtn.className = 'grid-btn';
+                    palBtn.id = paletteBtnId;
+                    palBtn.innerText = qIndex + 1; // Displays 1, 2, 3...
+                    palBtn.onclick = () => scrollToQuestion(uniqueQId);
+                    palGrid.appendChild(palBtn);
 
-        opts.forEach(opt => {
-            if(opt.text && opt.text.trim() !== '') { 
-                // Restore classes if user previously answered it
-                let btnClass = 'option-btn';
-                if (fq.userSelected === opt.letter) {
-                    btnClass += (fq.userSelected === q.correctOpt) ? ' correct' : ' wrong';
-                }
+                    // --- Build Main Question Card ---
+                    const card = document.createElement('div'); 
+                    card.className = 'glass-panel';
+                    card.id = uniqueQId; // Assign ID here!
 
-                optsHtml += `
-                <button class="${btnClass}" onclick="checkAnswer(this, '${opt.letter}', '${q.correctOpt}')">
-                    <span><strong>${opt.letter}.</strong> ${opt.text}</span>
-                    <svg class="status-icon icon-tick" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                        <polyline points="20 6 9 17 4 12"></polyline>
-                    </svg>
-                    <svg class="status-icon icon-cross" viewBox="0 0 24 24" fill="none" stroke="#ff4b4b" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                        <line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line>
-                    </svg>
-                </button>`;
+                    let imgHtml = '';
+                    if (q.imageBase64) imgHtml = `<img src="${q.imageBase64}" class="question-image" alt="Figure" />`;
+
+                    const safeQText = escapeHTML(q.text), safeOptA = escapeHTML(q.opt1), safeOptB = escapeHTML(q.opt2), 
+                          safeOptC = escapeHTML(q.opt3), safeOptD = escapeHTML(q.opt4), safeTag = escapeHTML(q.examTag);
+                    const answerText = q.correctOpt ? `Option ${q.correctOpt}` : 'No answer provided in key.';
+
+                    let html = `
+                        <div class="question-text"><strong>Q${qIndex + 1}.</strong> ${safeQText}</div>
+                        ${imgHtml}
+                        <div class="options-container">`;
+                        
+                    const opts = [
+                        { letter: 'A', text: safeOptA },
+                        { letter: 'B', text: safeOptB },
+                        { letter: 'C', text: safeOptC },
+                        { letter: 'D', text: safeOptD }
+                    ];
+
+                    opts.forEach(opt => {
+                        if(opt.text && opt.text.trim() !== '') { 
+                            // Notice we pass paletteBtnId so checkAnswer knows which grid button to color!
+                            html += `
+                            <button class="option-btn" onclick="checkAnswer(this, '${opt.letter}', '${q.correctOpt}', '${paletteBtnId}')">
+                                <span><strong>${opt.letter}.</strong> ${opt.text}</span>
+                                <svg class="status-icon icon-tick" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                </svg>
+                                <svg class="status-icon icon-cross" viewBox="0 0 24 24" fill="none" stroke="#ff4b4b" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                                    <line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line>
+                                </svg>
+                            </button>`;
+                        }
+                    });
+
+                    html += `</div>`;
+                    if (safeTag) html += `<div class="exam-tag">${safeTag}</div>`;
+
+                    html += `
+                        <button class="btn-primary" onclick="toggleAnswer(this)">Reveal Answer</button>
+                        <div class="answer-box"><strong>Correct Answer:</strong> ${answerText}</div>
+                    `;
+
+                    card.innerHTML = html; 
+                    container.appendChild(card);
+                });
             }
         });
 
-        // Construct Final HTML
-        viewer.innerHTML = `
-            <div class="type-header">${escapeHTML(fq.typeName).toUpperCase()}</div>
-            <div class="glass-panel">
-                <div class="question-text"><strong>Q${index + 1}.</strong> ${safeQText}</div>
-                ${imgHtml}
-                <div class="options-container" id="options-box">
-                    ${optsHtml}
-                </div>
-                ${safeTag ? `<div class="exam-tag">${safeTag}</div>` : ''}
-                
-                <button id="reveal-btn" class="btn-primary" onclick="toggleAnswer()">
-                    ${fq.revealed ? 'Hide Answer' : 'Reveal Answer'}
-                </button>
-                <div id="answer-box" class="answer-box ${fq.revealed ? 'visible' : ''}">
-                    <strong>Correct Answer:</strong> ${answerText}
-                </div>
-            </div>
-        `;
-
-        // Re-fire KaTeX
-        renderMathInElement(viewer, {
+        // Fire KaTeX
+        renderMathInElement(document.body, {
             delimiters: [{left: "$$", right: "$$", display: true}, {left: "$", right: "$", display: false}],
             throwOnError: false
         });
-        
-        // Update Bottom Navigation Buttons
-        document.getElementById('prevBtn').disabled = (index === 0);
-        document.getElementById('nextBtn').disabled = (index === flatQuestions.length - 1);
     }
 
-    function navigateQuestion(step) {
-        jumpToQuestion(currentQuestionIndex + step);
+    // --- INTERACTIVITY ---
+    function toggleAnswer(btn) {
+        const answerBox = btn.nextElementSibling; 
+        answerBox.classList.toggle('visible');
+        btn.innerText = answerBox.classList.contains('visible') ? 'Hide Answer' : 'Reveal Answer';
     }
 
-    // --- INTERACTIVITY (With State Saving) ---
-    function checkAnswer(buttonElement, selectedLetter, correctLetter) {
+    function checkAnswer(buttonElement, selectedLetter, correctLetter, paletteBtnId) {
         if (!correctLetter || correctLetter === 'undefined' || correctLetter === '') {
             alert("Teacher hasn't set the correct answer for this question yet!");
             return;
         }
 
-        const currentQ = flatQuestions[currentQuestionIndex];
-        currentQ.userSelected = selectedLetter;
+        // Check the DOM for the corresponding palette button
+        const palBtn = document.getElementById(paletteBtnId);
 
-        // Reset visual state of all buttons in this question
-        const optionsBox = document.getElementById('options-box');
-        for(let btn of optionsBox.children) {
-            btn.classList.remove('correct', 'wrong');
-        }
-
-        // Apply new visual state and save to memory
         if (selectedLetter === correctLetter) {
             buttonElement.classList.add('correct');
-            currentQ.isCorrect = true;
+            buttonElement.classList.remove('wrong');
+            if(palBtn) {
+                palBtn.classList.add('palette-correct');
+                palBtn.classList.remove('palette-wrong');
+            }
         } else {
             buttonElement.classList.add('wrong');
-            currentQ.isCorrect = false;
-        }
-        
-        renderQuestionPalette(); // Update grid colors instantly
-    }
-
-    function toggleAnswer() {
-        const currentQ = flatQuestions[currentQuestionIndex];
-        currentQ.revealed = !currentQ.revealed; // Save state
-        
-        const answerBox = document.getElementById('answer-box');
-        const revealBtn = document.getElementById('reveal-btn');
-        
-        if(currentQ.revealed) {
-            answerBox.classList.add('visible');
-            revealBtn.innerText = 'Hide Answer';
-        } else {
-            answerBox.classList.remove('visible');
-            revealBtn.innerText = 'Reveal Answer';
+            if(palBtn) {
+                palBtn.classList.add('palette-wrong');
+            }
         }
     }
 </script>
 
 </body>
 </html>
-       
